@@ -8,16 +8,29 @@
         <div class="card">
             <div class="card-body">
                 <h2 class="text-center mb-4">Log In</h2>
+
+                {% if form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+                
                 <form method="POST">
                     {% csrf_token %}
                     {% for field in form %}
                         <div class="form-outline mb-4">
                             {{ field }}
                             <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {% if field.errors %}
+                                <div class="text-danger">
+                                    {{ field.errors }}
+                                </div>
+                            {% endif %}
                         </div>
                     {% endfor %}
                     <button class="btn btn-primary btn-block" type="submit">Login</button>
                 </form>
+
                 <div class="border-top pt-3">
                     <small class="text-muted">
                         Need An Account? <a class="ml-2" href="{% url 'register' %}">Sign Up Now</a>
