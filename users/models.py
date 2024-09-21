@@ -8,7 +8,7 @@ class Profile(models.Model):
     bio = models.CharField(max_length=500, blank=True)
     location = models.CharField(max_length=30, blank=True)
     birth_date = models.DateField(null=True, blank=True)
-    profile_picture = models.ImageField(upload_to='profile_pics', default='default.png')
+    profile_picture = models.ImageField(upload_to='profile_pics', default='default-profile.png')
 
     @property
     def profile_picture_url(self):
@@ -20,13 +20,8 @@ class Profile(models.Model):
 def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
-    instance.profile.save()
-    
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
-
+    else:
+        instance.profile.save() 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()

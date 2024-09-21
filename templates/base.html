@@ -82,10 +82,11 @@
                                     <i class="fas fa-user me-1"></i>Profile
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'logout' %}">
-                                    <i class="fas fa-sign-out-alt me-1"></i>Logout
-                                </a>
+                            <li>
+                                <form action="{% url 'logout' %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item">Logout</button>
+                                </form>
                             </li>
                         {% else %}
                             <li class="nav-item">
