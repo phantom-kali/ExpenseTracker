@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Category - ExpenseTracker{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">
+                    <i class="fas fa-tags me-2"></i>Add Category
+                </h2>
+                <form method="post" id="addCategoryForm">
+                    {% csrf_token %}
+                    <div class="form-outline mb-4">
+                        {{ form.name }}
+                        <label class="form-label" for="{{ form.name.id_for_label }}">Category Name</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-plus-circle me-2"></i>Add Category
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('addCategoryForm');
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const categoryName = form.querySelector('input[name="name"]').value;
+            if (categoryName.trim() === '') {
+                alert('Please enter a category name.');
+                return;
+            }
+            form.submit();
+        });
+    });
+</script>
+{% endblock %}

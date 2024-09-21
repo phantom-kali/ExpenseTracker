@@ -1,0 +1,125 @@
+<!-- templates/base.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ExpenseTracker{% endblock %}</title>
+    <!-- MDB CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .gradient-custom {
+            background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
+        }
+        .navbar-nav .nav-link {
+            color: rgba(255, 255, 255, 0.7) !important;
+            transition: color 0.3s ease;
+        }
+        .navbar-nav .nav-link:hover {
+            color: rgba(255, 255, 255, 1) !important;
+        }
+        .navbar-nav .nav-link.active {
+            color: rgba(255, 255, 255, 1) !important;
+            font-weight: bold;
+        }
+        .dropdown-menu {
+            background-color: rgba(106, 17, 203, 0.9);
+        }
+        .dropdown-item {
+            color: rgba(255, 255, 255, 0.7) !important;
+        }
+        .dropdown-item:hover {
+            background-color: rgba(37, 117, 252, 0.7);
+            color: rgba(255, 255, 255, 1) !important;
+        }
+    </style>
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark gradient-custom">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{% url 'dashboard' %}">
+                    <i class="fas fa-wallet me-2"></i>ExpenseTracker
+                </a>
+                <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'dashboard' %}">
+                                <i class="fas fa-chart-line me-1"></i>Dashboard
+                            </a>
+                        </li>
+                        {% if user.is_authenticated %}
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-mdb-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-plus-circle me-1"></i>Add
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'add_expense' %}">
+                                            <i class="fas fa-receipt me-2"></i>Add Expense
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'add_category' %}">
+                                            <i class="fas fa-tags me-2"></i>Add Category
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href="{% url 'set_budget' %}">
+                                            <i class="fas fa-money-bill-wave me-2"></i>Set Budget
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}" href="{% url 'profile' %}">
+                                    <i class="fas fa-user me-1"></i>Profile
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'logout' %}">
+                                    <i class="fas fa-sign-out-alt me-1"></i>Logout
+                                </a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.resolver_match.url_name == 'login' %}active{% endif %}" href="{% url 'login' %}">
+                                    <i class="fas fa-sign-in-alt me-1"></i>Login
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link {% if request.resolver_match.url_name == 'register' %}active{% endif %}" href="{% url 'register' %}">
+                                    <i class="fas fa-user-plus me-1"></i>Register
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mt-4">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-mdb-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- MDB JavaScript -->
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

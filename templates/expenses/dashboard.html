@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - ExpenseTracker{% endblock %}
+
+{% block content %}
+<h2 class="mb-4">Dashboard</h2>
+
+<div class="row">
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Total Expenses</h5>
+                <h2 class="card-text">${{ total_expenses }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">This Month</h5>
+                <h2 class="card-text">${{ monthly_expenses }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Budget Remaining</h5>
+                <h2 class="card-text">${{ budget_remaining }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Recent Expenses</h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for expense in expenses %}
+                        <tr>
+                            <td>{{ expense.date }}</td>
+                            <td>{{ expense.category.name }}</td>
+                            <td>{{ expense.description }}</td>
+                            <td>${{ expense.amount }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Categories</h5>
+                <ul class="list-group list-group-flush">
+                    {% for category in categories %}
+                    <li class="list-group-item">{{ category.name }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block title %}Set Budget - ExpenseTracker{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">
+                    <i class="fas fa-money-bill-wave me-2"></i>Set Budget
+                </h2>
+                <form method="post" id="setBudgetForm">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="form-outline">
+                                {{ form.amount }}
+                                <label class="form-label" for="{{ form.amount.id_for_label }}">Budget Amount</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <div class="form-outline">
+                                {{ form.start_date }}
+                                <label class="form-label" for="{{ form.start_date.id_for_label }}">Start Date</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-outline mb-4">
+                        {{ form.end_date }}
+                        <label class="form-label" for="{{ form.end_date.id_for_label }}">End Date</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-save me-2"></i>Set Budget
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('setBudgetForm');
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const amount = form.querySelector('input[name="amount"]').value;
+            const startDate = form.querySelector('input[name="start_date"]').value;
+            const endDate = form.querySelector('input[name="end_date"]').value;
+            
+            if (amount.trim() === '' || startDate.trim() === '' || endDate.trim() === '') {
+                alert('Please fill in all fields.');
+                return;
+            }
+            
+            if (new Date(startDate) > new Date(endDate)) {
+                alert('Start date must be before end date.');
+                return;
+            }
+            
+            form.submit();
+        });
+    });
+</script>
+{% endblock %}

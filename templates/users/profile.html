@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile - ExpenseTracker{% endblock %}
+
+{% block extra_css %}
+<style>
+    .profile-header {
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/static/img/profile-background.png');
+        background-size: cover;
+        background-position: center;
+        color: white;
+        padding: 100px 0;
+        margin-bottom: 30px;
+    }
+    .profile-img {
+        width: 150px;
+        height: 150px;
+        object-fit: cover;
+        border: 5px solid white;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .card {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 15px;
+        overflow: hidden;
+    }
+    .card-title {
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 10px;
+    }
+    .form-outline {
+        position: relative;
+        margin-bottom: 1.5rem;
+    }
+    .form-outline input, .form-outline textarea {
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+        padding: 10px;
+        width: 100%;
+    }
+    .form-outline label {
+        position: absolute;
+        top: -10px;
+        left: 10px;
+        background: white;
+        padding: 0 5px;
+        font-size: 0.8rem;
+        color: #6c757d;
+    }
+    .drag-drop-area {
+        border: 2px dashed #ced4da;
+        border-radius: 5px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .drag-drop-area:hover, .drag-drop-area.dragover {
+        background-color: #f8f9fa;
+    }
+    .drag-drop-area i {
+        font-size: 2rem;
+        color: #6c757d;
+        margin-bottom: 10px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-header text-center">
+    <img src="{{ user.profile.profile_picture_url }}" 
+         alt="{{ user.username }}" 
+         class="rounded-circle profile-img mb-3">
+    <h1>{{ user.username }}</h1>
+    <p><i class="fas fa-map-marker-alt me-2"></i>{{ user.profile.location|default:"Location not set" }}</p>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-info-circle me-2"></i>About Me</h5>
+                    <p class="card-text">{{ user.profile.bio|default:"No bio available" }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-4"><i class="fas fa-user-edit me-2"></i>Edit Profile</h5>
+                    <form method="POST" enctype="multipart/form-data" id="profileForm">
+                        {% csrf_token %}
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <div class="form-outline">
+                                    {{ u_form.username }}
+                                    <label for="{{ u_form.username.id_for_label }}">Username</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="form-outline">
+                                    {{ u_form.email }}
+                                    <label for="{{ u_form.email.id_for_label }}">Email</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-outline mb-4">
+                            {{ p_form.bio }}
+                            <label for="{{ p_form.bio.id_for_label }}">Bio</label>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <div class="form-outline">
+                                    {{ p_form.location }}
+                                    <label for="{{ p_form.location.id_for_label }}">Location</label>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="form-outline">
+                                    {{ p_form.birth_date }}
+                                    <label for="{{ p_form.birth_date.id_for_label }}">Birth Date</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Profile Picture</label>
+                            <div class="drag-drop-area" id="dragDropArea">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Drag & Drop your image here or click to select</p>
+                                {{ p_form.profile_picture }}
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">
+                            <i class="fas fa-save me-2"></i>Save Changes
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('profileForm');
+        const dragDropArea = document.getElementById('dragDropArea');
+        const fileInput = dragDropArea.querySelector('input[type="file"]');
+
+        // Form validation
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = form.querySelector('input[name="username"]').value;
+            const email = form.querySelector('input[name="email"]').value;
+            
+            if (username.trim() === '' || email.trim() === '') {
+                alert('Username and email are required fields.');
+                return;
+            }
+            
+            if (!isValidEmail(email)) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+            
+            form.submit();
+        });
+        
+        function isValidEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        // Drag and drop functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dragDropArea.addEventListener(eventName, preventDefaults, false);
+        });
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dragDropArea.addEventListener(eventName, highlight, false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dragDropArea.addEventListener(eventName, unhighlight, false);
+        });
+
+        function highlight() {
+            dragDropArea.classList.add('dragover');
+        }
+
+        function unhighlight() {
+            dragDropArea.classList.remove('dragover');
+        }
+
+        dragDropArea.addEventListener('drop', handleDrop, false);
+
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            fileInput.files = files;
+        }
+
+        dragDropArea.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                dragDropArea.querySelector('p').textContent = `File selected: ${fileInput.files[0].name}`;
+            }
+        });
+    });
+</script>
+{% endblock %}
