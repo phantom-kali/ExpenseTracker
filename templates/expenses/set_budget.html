@@ -13,20 +13,20 @@
                 <form method="post" id="setBudgetForm">
                     {% csrf_token %}
                     <div class="row">
-                        <div class="col-md-6 mb-4">
+                        <div class="col-md-5 mb-4">
                             <div class="form-outline">
                                 {{ form.amount }}
                                 <label class="form-label" for="{{ form.amount.id_for_label }}">Budget Amount</label>
                             </div>
                         </div>
                         <div class="col-md-6 mb-4">
-                            <div class="form-outline">
+                            <div class="date-input-container form-outline">
                                 {{ form.start_date }}
                                 <label class="form-label" for="{{ form.start_date.id_for_label }}">Start Date</label>
                             </div>
                         </div>
                     </div>
-                    <div class="form-outline mb-4">
+                    <div class="date-input-container form-outline mb-4">
                         {{ form.end_date }}
                         <label class="form-label" for="{{ form.end_date.id_for_label }}">End Date</label>
                     </div>
@@ -63,5 +63,29 @@
             form.submit();
         });
     });
-</script>
+    <select id="categorySelect" name="category" class="form-select">
+        <option value="food">Food</option>
+        <option value="transport">Transport</option>
+        <option value="entertainment">Entertainment</option>
+        <option value="utilities">Utilities</option>
+        <option value="healthcare">Healthcare</option>
+        <option value="education">Education</option>
+        <option value="other">Other</option>
+        <option value="new_category">+ Add New Category</option>
+    </select>
+    
+    <div id="newCategoryInput" style="display:none;">
+        <label for="newCategory">New Category:</label>
+        <input type="text" id="newCategory" name="newCategory">
+    </div>
+    
+    <script>
+        document.getElementById('categorySelect').addEventListener('change', function() {
+            if (this.value === 'new_category') {
+                document.getElementById('newCategoryInput').style.display = 'block';
+            } else {
+                document.getElementById('newCategoryInput').style.display = 'none';
+            }
+        });
+    </script>
 {% endblock %}

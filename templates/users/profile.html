@@ -4,67 +4,50 @@
 
 {% block extra_css %}
 <style>
-    .profile-header {
-        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/static/img/profile-background.png');
-        background-size: cover;
-        background-position: center;
-        color: white;
-        padding: 100px 0;
-        margin-bottom: 30px;
-    }
-    .profile-img {
-        width: 150px;
-        height: 150px;
-        object-fit: cover;
-        border: 5px solid white;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-    .card {
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        border-radius: 15px;
-        overflow: hidden;
-    }
-    .card-title {
-        border-bottom: 2px solid #f0f0f0;
-        padding-bottom: 10px;
-    }
     .form-outline {
-        position: relative;
-        margin-bottom: 1.5rem;
+        margin-bottom: 2rem; /* Adjust the space as needed */
     }
-    .form-outline input, .form-outline textarea {
-        border: 1px solid #ced4da;
-        border-radius: 5px;
-        padding: 10px;
-        width: 100%;
-    }
-    .form-outline label {
-        position: absolute;
-        top: -10px;
-        left: 10px;
-        background: white;
-        padding: 0 5px;
-        font-size: 0.8rem;
-        color: #6c757d;
-    }
-    .drag-drop-area {
-        border: 2px dashed #ced4da;
-        border-radius: 5px;
-        padding: 20px;
-        text-align: center;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-    .drag-drop-area:hover, .drag-drop-area.dragover {
-        background-color: #f8f9fa;
-    }
-    .drag-drop-area i {
-        font-size: 2rem;
-        color: #6c757d;
-        margin-bottom: 10px;
-    }
+
+    .form-outline input[type="text"],
+.form-outline input[type="email"],
+.form-outline textarea {
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--dark-text);
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-outline input[type="text"]:focus,
+.form-outline input[type="email"]:focus,
+.form-outline textarea:focus {
+    color: var(--dark-text);
+    background-color: whitesmoke;
+    border-color: green;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+.form-outline label {
+    position: absolute;
+    top: -1.4rem;
+    left: 0.75rem;
+    padding: 0 0.25rem;
+    background-color: #fff;
+    color: var(--primary-color);
+    font-size: 1rem;
+    transition: all 0.2s ease-in-out;
+    font-weight: bold;
+}
+
 </style>
 {% endblock %}
+
 
 {% block content %}
 <div class="profile-header text-center">
@@ -92,25 +75,25 @@
                     <form method="POST" enctype="multipart/form-data" id="profileForm">
                         {% csrf_token %}
                         <div class="row">
-                            <div class="col-md-6 mb-4">
+                            <div class="col-md-6 mb-3">
                                 <div class="form-outline">
                                     {{ u_form.username }}
                                     <label for="{{ u_form.username.id_for_label }}">Username</label>
                                 </div>
                             </div>
-                            <div class="col-md-6 mb-4">
+                            <div class="col-md-6 mb-3">
                                 <div class="form-outline">
                                     {{ u_form.email }}
                                     <label for="{{ u_form.email.id_for_label }}">Email</label>
                                 </div>
                             </div>
                         </div>
-                        <div class="form-outline mb-4">
+                        <div class="form-outline mb-5">
                             {{ p_form.bio }}
                             <label for="{{ p_form.bio.id_for_label }}">Bio</label>
                         </div>
                         <div class="row">
-                            <div class="col-md-6 mb-4">
+                            <div class="col-md-6 mb-5">
                                 <div class="form-outline">
                                     {{ p_form.location }}
                                     <label for="{{ p_form.location.id_for_label }}">Location</label>

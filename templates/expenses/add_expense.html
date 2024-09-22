@@ -13,14 +13,14 @@
                 <form method="post" id="addExpenseForm">
                     {% csrf_token %}
                     <div class="row">
-                        <div class="col-md-6 mb-4">
+                        <div class="col-md-5 mb-3">
                             <div class="form-outline">
                                 {{ form.amount }}
                                 <label class="form-label" for="{{ form.amount.id_for_label }}">Amount</label>
                             </div>
                         </div>
                         <div class="col-md-6 mb-4">
-                            <div class="form-outline">
+                            <div class="date-input-container form-outline">
                                 {{ form.date }}
                                 <label class="form-label" for="{{ form.date.id_for_label }}">Date</label>
                             </div>
