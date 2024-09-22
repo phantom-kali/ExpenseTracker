@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-5">
+  <div class="card">
+    <div class="card-body">
+      <h2 class="card-title">{{ model_name|title }} Detail</h2>
+      <p class="card-text">{{ object }}</p>
+      <div class="mt-3">
+        <a href="{% url model_name|add:'_update' object.pk %}" class="btn btn-primary">
+          <i class="fas fa-edit me-2"></i>Edit
+        </a>
+        <a href="{% url model_name|add:'_delete' object.pk %}" class="btn btn-danger ms-2">
+          <i class="fas fa-trash-alt me-2"></i>Delete
+        </a>
+        <a href="{% url model_name|add:'_list' %}" class="btn btn-secondary ms-2">
+          <i class="fas fa-arrow-left me-2"></i>Back to List
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

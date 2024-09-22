@@ -42,21 +42,20 @@
                                 <i class="fas fa-plus-circle me-1"></i>Add
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                                <li>
-                                    <a class="dropdown-item" href="{% url 'add_expense' %}">
-                                        <i class="fas fa-receipt me-2"></i>Add Expense
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="{% url 'add_category' %}">
-                                        <i class="fas fa-tags me-2"></i>Add Category
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="{% url 'set_budget' %}">
-                                        <i class="fas fa-money-bill-wave me-2"></i>Set Budget
-                                    </a>
-                                </li>
+                                <li><a class="dropdown-item" href="{% url 'category_create' %}">Add Category</a></li>
+                                <li><a class="dropdown-item" href="{% url 'budget_create' %}">Add Budget</a></li>
+                                <li><a class="dropdown-item" href="{% url 'expense_create' %}">Add Expense</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarManageDropdown" role="button"
+                                data-mdb-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-cog me-1"></i>Manage
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarManageDropdown">
+                                <li><a class="dropdown-item" href="{% url 'category_list' %}">Categories</a></li>
+                                <li><a class="dropdown-item" href="{% url 'budget_list' %}">Budgets</a></li>
+                                <li><a class="dropdown-item" href="{% url 'expense_list' %}">Expenses</a></li>
                             </ul>
                         </li>
                         <li class="nav-item">
