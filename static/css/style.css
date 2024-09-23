@@ -160,6 +160,18 @@ h2 {
     background: linear-gradient(135deg, #28a745, #20c997);
 }
 
+.navbar {
+    z-index: 1030;
+}
+
+.navbar .navbar-toggler {
+    z-index: 1051;
+}
+
+.navbar-collapse {
+    z-index: 1049;
+}
+
 .navbar-nav .nav-link {
     color: #ffffff !important;
     transition: color 0.3s ease;
@@ -176,6 +188,7 @@ h2 {
 
 .dropdown-menu {
     background-color: rgba(40, 167, 69, 0.9);
+    z-index: 1052;
 }
 
 .dropdown-item {
