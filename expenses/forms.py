@@ -28,4 +28,5 @@ class ExpenseForm(forms.ModelForm):
         fields = ['amount', 'date', 'description', 'category']
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control date-input-container'}),
+            'category': forms.RadioSelect(attrs={'class': 'category-bubbles'}),
         }
