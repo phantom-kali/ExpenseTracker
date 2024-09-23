@@ -107,6 +107,14 @@
 
     <!-- MDB JavaScript -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
+    <script>
+        // Ensure proper initialization of MDB components
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize all MDB elements
+            mdb.Collapse.init(document.querySelectorAll('.collapse'));
+            mdb.Dropdown.init(document.querySelectorAll('.dropdown-toggle'));
+        });
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 
