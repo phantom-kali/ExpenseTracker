@@ -17,17 +17,43 @@ This Django web application is designed to help you effectively track and manage
 
 ### Usage
 1. **Installation:**
-   * Clone the repository: `git clone https://github.com/phantom-kali/ExpenseTracker.git`
-   * Create a virtual environment: `python -m venv venv`
-   * Activate the virtual environment: `venv\Scripts\activate` (Windows) or `source venv/bin/activate` (Linux/macOS)
-   * Install dependencies: `pip install -r requirements.txt`
+   ```bash
+   # Clone the repository
+   git clone https://github.com/phantom-kali/ExpenseTracker.git
+
+   # Navigate to the project directory
+   cd ExpenseTracker
+
+   # Create a virtual environment
+   python -m venv venv
+
+   # Activate the virtual environment
+   # For Windows:
+   venv\Scripts\activate
+   # For Linux/macOS:
+   source venv/bin/activate
+
+   # Install dependencies
+   pip install -r requirements.txt
+   ```
+
 2. **Database Setup:**
-   * Create a database according to your Django settings.
-   * Run migrations: `python manage.py migrate`
+   ```bash
+   # Create a database according to your Django settings
+
+   # Run migrations
+   python manage.py migrate
+   ```
+
 3. **Run the Server:**
-   * Start the development server: `python manage.py runserver`
+   ```bash
+   # Start the development server
+   python manage.py runserver
+   ```
+
 4. **Access the Application:**
-   * Open a web browser and navigate to `http://127.0.0.1:8000/`
+   * Open a web browser and navigate to:  
+     `http://127.0.0.1:8000/`
 
 ### Contributing
 Contributions are welcome! Please feel free to submit pull requests or issues.
