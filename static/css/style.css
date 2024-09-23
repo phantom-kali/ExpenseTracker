@@ -150,7 +150,7 @@ h2 {
 }
 
 .chart-container {
-    background-color: #ffffff;
+    background-color: whitesmoke;
     border-radius: 15px;
     padding: 20px;
     box-shadow: var(--card-shadow);
@@ -403,3 +403,19 @@ h2 {
     transition: all 0.2s ease-in-out;
     font-weight: bold;
 }
+
+.logout-btn .btn {
+    padding: 0;
+    font-size: inherit; 
+    font-weight: bold;
+    border-radius: 0;
+    background-color: transparent;
+    color: #000; 
+}
+
+.logout-btn .btn:hover {
+    background-color: transparent; 
+    color: #000; 
+}
+
+
