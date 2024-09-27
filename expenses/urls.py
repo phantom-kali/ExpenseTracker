@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path,  include 
 from . import views
 
 urlpatterns = [
@@ -20,4 +20,7 @@ urlpatterns = [
     path('expenses/new/', views.expense_create_or_update, name='expense_create'),
     path('expenses/<int:pk>/edit/', views.expense_create_or_update, name='expense_update'),
     path('expenses/<int:pk>/delete/', views.expense_delete, name='expense_delete'),
+    
+    path('payment/', include('payment.urls')),
 ]
+

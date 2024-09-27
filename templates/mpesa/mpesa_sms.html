@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container">
+    <h2>Submit M-Pesa SMS</h2>
+    <form method="POST" action="{% url 'submit_mpesa_sms' %}">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="sms_text">M-Pesa SMS:</label>
+            <textarea name="sms_text" id="sms_text" class="form-control" rows="5" placeholder="Paste the M-Pesa SMS here..." required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Submit</button>
+    </form>
+    
+  </div>
+{% endblock %}
