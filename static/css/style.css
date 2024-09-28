@@ -349,14 +349,20 @@ h2 {
     background-color: #218838;
     border-color: #218838;
 }
-
 .date-input-container {
     position: relative;
-    margin-bottom: 1rem;
-    border: 1px solid #ced4da;
+    width: 40%;
+    margin-bottom: 1.5rem;
+}
+
+.date-input-wrapper {
+    height: 33px;
+    width: 100%;
+    margin: 0 auto;
     background-color: whitesmoke;
-
-
+    border: 1px solid grey;
+    border-radius: 0.25rem;
+    overflow: hidden;
 }
 
 .date-input-container input[type="date"] {
@@ -364,46 +370,38 @@ h2 {
     padding: 0.375rem 0.75rem;
     font-size: 1rem;
     line-height: 1.5;
-    color: var(--dark-text);
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 1px solid #ced4da;
-    border-radius: 0.25rem;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    color: green;
+    background-color: transparent;
+    border: none;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2328a745' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
-    background-position: right 0.75rem center;
-    background-size: 16px 16px;
+    background-position: right 1rem center; /* Adjusted */
+    background-size: 16px 16px; /* Adjusted */
     cursor: pointer;
 }
-
 .date-input-container input[type="date"]::-webkit-calendar-picker-indicator {
-    opacity: 0;
+    opacity: 1; /* Set this to make the calendar icon visible */
+    background: none; /* Remove any custom background for visibility */
 }
-
 .date-input-container input[type="date"]:focus {
-    color: var(--dark-text);
-    background-color: lightgray;
-    border-color: green;
-    outline: 0;
+    outline: none;
     box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
 }
 
 .date-input-container label {
     position: absolute;
     top: -0.75rem;
-    left: 0.75rem;
+    left: 5%; 
     padding: 0 0.25rem;
     background-color: #fff;
     color: var(--primary-color);
-    font-size: 1rem;
+    font-size: 0.875rem;
     transition: all 0.2s ease-in-out;
     font-weight: bold;
 }
-
 .logout-btn .btn {
     padding: 0;
     font-size: inherit; 
@@ -454,3 +452,4 @@ h2 {
 .category-bubbles input[type="radio"]:checked + label:hover {
     background-color: #0056b3;
 }
+

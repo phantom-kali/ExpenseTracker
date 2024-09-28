@@ -1,19 +1,40 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="container mt-5">
-  <div class="card">
+<div class="container mt-4 d-flex justify-content-center align-items-start" style="min-height: 80vh;">
+  <div class="card" style="width: 50%;">
     <div class="card-body">
-      <h2 class="card-title">{% if is_update %}Edit{% else %}Create{% endif %} {{ model_name|title }}</h2>
+      <h2 class="card-title text-center">{% if is_update %}Edit{% else %}Create{% endif %} {{ model_name|title }}</h2>
       <form method="post">
         {% csrf_token %}
         {% for field in form %}
-          <div class="form-outline mb-4">
-            {{ field }}
-            <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
-          </div>
+          {% if field.name == 'date' or field.name == 'start_date' or field.name == 'end_date' %}
+            <div class="date-input-container">
+              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              <div class="date-input-wrapper">
+                {{ field }}
+              </div>
+            </div>
+          {% elif field.name == 'category' %}
+            <div class="form-group mb-4">
+              <label>{{ field.label }}</label>
+              <div class="category-bubbles">
+                {% for radio in field %}
+                  {{ radio.tag }}
+                  <label for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                {% endfor %}
+              </div>
+            </div>
+          {% else %}
+            <div class="form-outline mb-4">
+              {{ field }}
+              <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+            </div>
+          {% endif %}
         {% endfor %}
-        <button type="submit" class="btn btn-primary">Save</button>
-        <a href="{% url model_name|add:'_list' %}" class="btn btn-secondary ms-2">Cancel</a>
+        <div class="d-flex justify-content-center">
+          <button type="submit" class="btn btn-primary me-2">Save</button>
+          <a href="{% url model_name|add:'_list' %}" class="btn btn-secondary ms-2">Cancel</a>
+        </div>
       </form>
     </div>
   </div>
