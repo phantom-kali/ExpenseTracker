@@ -1,2 +1,2 @@
 db.sqlite3
-media/
+media/__pycache__/
