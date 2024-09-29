@@ -94,18 +94,20 @@
     </header>
 
     <main class="container mt-4">
-        {% if messages %}
-        {% for message in messages %}
-        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-            {{ message }}
-            <button type="button" class="btn-close" data-mdb-dismiss="alert" aria-label="Close"></button>
+        <div class="alert-container">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-mdb-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
         </div>
-        {% endfor %}
-        {% endif %}
         {% block content %}
         {% endblock %}
     </main>
-
+    
     <!-- MDB JavaScript -->
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
     <script>
@@ -114,6 +116,25 @@
             // Initialize all MDB elements
             mdb.Collapse.init(document.querySelectorAll('.collapse'));
             mdb.Dropdown.init(document.querySelectorAll('.dropdown-toggle'));
+        });
+        document.addEventListener('DOMContentLoaded', function() {
+            // Select the alert container
+            const alertContainer = document.querySelector('.alert-container');
+    
+            // Check if there are any alerts
+            if (alertContainer.children.length > 0) {
+                // Set opacity to 1 to fade in
+                alertContainer.style.opacity = 1;
+    
+                // Automatically remove the alert after 5 seconds
+                setTimeout(() => {
+                    alertContainer.style.opacity = 0; // Fade out
+                    // Optionally, remove the alerts from the DOM after fade out
+                    setTimeout(() => {
+                        alertContainer.innerHTML = ''; // Clear the alerts
+                    }, 500); // Match this time with the CSS transition duration
+                }, 2500); // 5000 milliseconds = 5 seconds
+            }
         });
     </script>
     {% block extra_js %}{% endblock %}
