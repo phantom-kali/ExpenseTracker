@@ -6,9 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}ExpenseTracker{% endblock %}</title>
-    <!-- MDB CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css" rel="stylesheet">
-    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
@@ -108,32 +106,24 @@
         {% endblock %}
     </main>
     
-    <!-- MDB JavaScript -->
+    
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
     <script>
-        // Ensure proper initialization of MDB components
         document.addEventListener('DOMContentLoaded', function() {
-            // Initialize all MDB elements
             mdb.Collapse.init(document.querySelectorAll('.collapse'));
             mdb.Dropdown.init(document.querySelectorAll('.dropdown-toggle'));
         });
         document.addEventListener('DOMContentLoaded', function() {
-            // Select the alert container
             const alertContainer = document.querySelector('.alert-container');
     
-            // Check if there are any alerts
             if (alertContainer.children.length > 0) {
-                // Set opacity to 1 to fade in
                 alertContainer.style.opacity = 1;
-    
-                // Automatically remove the alert after 5 seconds
                 setTimeout(() => {
-                    alertContainer.style.opacity = 0; // Fade out
-                    // Optionally, remove the alerts from the DOM after fade out
+                    alertContainer.style.opacity = 0; 
                     setTimeout(() => {
-                        alertContainer.innerHTML = ''; // Clear the alerts
-                    }, 500); // Match this time with the CSS transition duration
-                }, 2500); // 5000 milliseconds = 5 seconds
+                        alertContainer.innerHTML = ''; 
+                    }, 500); 
+                }, 2500); 
             }
         });
     </script>
