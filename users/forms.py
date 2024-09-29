@@ -23,7 +23,19 @@ class ProfileUpdateForm(forms.ModelForm):
         model = Profile
         fields = ['bio', 'location', 'birth_date', 'profile_picture']
         widgets = {
-            'birth_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control date-input-container'}),
+            'birth_date': forms.DateInput(attrs={
+                'type': 'date',
+                'class': 'form-control date-input-container'
+            }),
+            'profile_picture': forms.ClearableFileInput(attrs={
+                'class': 'file-input-container'
+            }),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['birth_date'].widget.attrs['class'] = 'form-control date-input-container'
+        self.fields['profile_picture'].widget.attrs['class'] = 'file-input-container'
+
 
 

@@ -7,9 +7,9 @@
       <form method="post">
         {% csrf_token %}
         {% for field in form %}
-          {% if field.name == 'date' or field.name == 'start_date' or field.name == 'end_date' %}
+          {% if field.name == 'date' or field.name == 'start_date' or field.name == 'end_date' or field.name == 'birth_date' %}
             <div class="date-input-container">
-              <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+              <labesl for="{{ field.id_for_label }}">{{ field.label }}</labesl>
               <div class="date-input-wrapper">
                 {{ field }}
               </div>

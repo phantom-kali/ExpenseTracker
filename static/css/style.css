@@ -351,7 +351,7 @@ h2 {
 }
 .date-input-container {
     position: relative;
-    width: 40%;
+    width: 60%;
     margin-bottom: 1.5rem;
 }
 
@@ -408,14 +408,51 @@ h2 {
     font-weight: bold;
     border-radius: 0;
     background-color: transparent;
-    align-items: center; 
+    align-items: center;
     height: 100%; 
-
 }
 
 .logout-btn .btn:hover {
     background-color: transparent; 
     color: #000; 
+}
+
+.category-bubbles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.category-bubbles input[type="radio"] {
+    display: none;
+}
+
+.category-bubbles label {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #f0f0f0;
+    border: 2px solid #d0d0d0;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.category-bubbles label:hover {
+    background-color: #e0e0e0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.category-bubbles input[type="radio"]:checked + label {
+    background-color: #007bff;
+    border-color: #0056b3;
+    color: white;
+}
+
+.category-bubbles input[type="radio"]:checked + label:hover {
+    background-color: #0056b3;
 }
 
 
@@ -435,11 +472,11 @@ h2 {
     backdrop-filter: blur(5px); 
     border-radius: 8px; 
     margin: 0; 
-    width: 600px; 
-    height: 150px;
-    display: flex;
+    width: 600px;
+    height: 150px; 
+    display: flex; 
     justify-content: center; 
     align-items: center; 
-    text-align: center;
+    text-align: center; 
     pointer-events: auto; 
 }
