@@ -428,7 +428,7 @@ h2 {
 .category-bubbles label {
     display: inline-block;
     padding: 10px 20px;
-    background-color: #f0f0f0;
+    background-color: #18e690;
     border: 2px solid #d0d0d0;
     border-radius: 25px;
     cursor: pointer;
@@ -437,9 +437,22 @@ h2 {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
+/* Bounce Animation */
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
 .category-bubbles label:hover {
-    background-color: #e0e0e0;
-    transform: translateY(-2px);
+    background-color: #027c3f;
+    animation: bounce 0.6s; /* Apply bounce animation on hover */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
