@@ -1,0 +1,47 @@
+<!-- templates/visuals/budget_vs_expenses.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Budget vs Expenses</h1>
+
+<canvas id="budgetChart"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var ctx = document.getElementById('budgetChart').getContext('2d');
+    var budgetData = {{ budget_expense_data|safe }};
+    var labels = budgetData.map(data => data.period);
+    var budget = budgetData.map(data => data.budget);
+    var expenses = budgetData.map(data => data.expenses);
+
+    var chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Budget',
+                    data: budget,
+                    backgroundColor: '#27ae60',
+                    borderColor: '#2ecc71',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Expenses',
+                    data: expenses,
+                    backgroundColor: '#e74c3c',
+                    borderColor: '#c0392b',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

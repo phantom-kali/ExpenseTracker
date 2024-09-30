@@ -1,0 +1,38 @@
+<!-- templates/visuals/expenses_over_time.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Expenses Over Time</h1>
+
+<canvas id="timeChart"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var ctx = document.getElementById('timeChart').getContext('2d');
+    var expenses = {{ expenses_by_date|safe }};
+    var labels = expenses.map(exp => exp.day);
+    var data = expenses.map(exp => exp.total_amount);
+
+    var chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Expenses Over Time',
+                data: data,
+                borderColor: '#2980b9',
+                backgroundColor: 'rgba(52, 152, 219, 0.5)',
+                borderWidth: 1,
+                fill: true
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

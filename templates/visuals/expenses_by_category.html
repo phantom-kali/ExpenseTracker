@@ -1,0 +1,30 @@
+<!-- templates/visuals/expenses_by_category.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Expenses by Category</h1>
+
+<canvas id="categoryChart"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var ctx = document.getElementById('categoryChart').getContext('2d');
+    var categories = {{ categories|safe }};
+    var labels = categories.map(cat => cat.category__name);
+    var data = categories.map(cat => cat.total_amount);
+
+    var chart = new Chart(ctx, {
+        type: 'pie',  // Can be 'bar', 'pie', etc.
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Expenses by Category',
+                data: data,
+                backgroundColor: ['#f39c12', '#2980b9', '#8e44ad', '#27ae60'],
+                borderColor: ['#e67e22', '#3498db', '#9b59b6', '#2ecc71'],
+                borderWidth: 1
+            }]
+        }
+    });
+</script>
+{% endblock %}
