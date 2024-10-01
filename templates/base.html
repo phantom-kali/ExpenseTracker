@@ -15,7 +15,7 @@
 </head>
 
 <body>
-      <header>
+    <header>
         <nav class="navbar navbar-expand-lg navbar-dark gradient-custom">
             <div class="container-fluid">
                 <a class="navbar-brand" href="{% url 'dashboard' %}">
@@ -57,16 +57,24 @@
                                 <li><a class="dropdown-item" href="{% url 'expense_list' %}">Expenses</a></li>
                             </ul>
                         </li>
+    
+                        <!-- New Statistics Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarStatisticsDropdown" role="button"
+                                data-mdb-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-chart-bar me-1"></i>Statistics
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarStatisticsDropdown">
+                                <li><a class="dropdown-item" href="{% url 'visuals:budget_vs_expenses' %}">Budget vs Expenses</a></li>
+                                <li><a class="dropdown-item" href="{% url 'visuals:expenses_by_category' %}">Expenses by Category</a></li>
+                                <li><a class="dropdown-item" href="{% url 'visuals:expenses_over_time' %}">Expenses Over Time</a></li>
+                            </ul>
+                        </li>
+    
                         <li class="nav-item">
                             <a class="nav-link {% if request.resolver_match.url_name == 'profile' %}active{% endif %}"
                                 href="{% url 'profile' %}">
                                 <i class="fas fa-user me-1"></i>Profile
-                            </a>                            
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link {% if request.resolver_match.url_name == 'statistic' %}active{% endif %}"
-                                href="{% url 'visuals:statistics' %}">
-                                <i class="fas fa-user me-1"></i>Statistics
                             </a>                            
                         </li>
                         <li class="logout-btn nav-item">
@@ -95,7 +103,8 @@
                 </div>
             </div>
         </nav>
-    </header> 
+    </header>
+     
 
     <main class="container mt-4">
         <div class="alert-container">
