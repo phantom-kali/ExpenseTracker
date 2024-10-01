@@ -70,6 +70,7 @@ body {
     color: #ffffff;
     font-weight: 600;
     text-transform: uppercase;
+    border: 2px solid #ffffff;
 }
 
 .table tbody tr {
@@ -137,6 +138,7 @@ h2 {
     font-weight: 600;
     border-radius: 8px;
     transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .btn-primary {
@@ -481,7 +483,3 @@ h2 {
     pointer-events: auto; 
 }
 
-.small-pie-chart {
-    height: 400px;
-    width: 400px;
-}

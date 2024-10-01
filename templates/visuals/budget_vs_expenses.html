@@ -1,105 +1,95 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} 
+{% block content %} 
+<h1 style="text-align: center; color:green;">Budget vs Expenses</h1> 
 
-{% block content %}
-<h1>Budget vs Expenses</h1>
+<div style="width: 500px; height: 400px; overflow: hidden; position: relative; margin: 0 auto;">
+    <canvas id="budgetChart" style="height: 100%; width: 100%;"></canvas> 
+</div>
 
-<!-- Canvas for the bar chart -->
-<canvas id="budgetChart" style="height: 400px;"></canvas>
+<h1 style="text-align: center; color:green;">Budget Overview (Pie Chart)</h1> 
+<div style="width: 500px; height: 500px; overflow: hidden; position: relative; margin: 0 auto;">
+    <canvas id="budgetPieChart" style="height: 100%; width: 100%;"></canvas>
+</div>
 
-<!-- Canvas for the pie chart -->
-<h1>Budget Overview (Pie Chart)</h1>
-<canvas id="budgetPieChart" style="height: 200px; width: 200px;"></canvas> <!-- Adjusted size -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+<script> 
+    var budgetData = {{ budget_expense_data|safe }}; 
+    console.log(budgetData); 
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    if (budgetData.length > 0) { 
+        var ctxBar = document.getElementById('budgetChart').getContext('2d'); 
+        var labels = budgetData.map(data => data.period); 
+        var budget = budgetData.map(data => data.budget); 
+        var expenses = budgetData.map(data => data.expenses); 
+        var barChart = new Chart(ctxBar, { 
+            type: 'bar', 
+            data: { 
+                labels: labels, 
+                datasets: [ 
+                    { 
+                        label: 'Budget', 
+                        data: budget, 
+                        backgroundColor: '#27ae60', 
+                        borderColor: '#2ecc71', 
+                        borderWidth: 1 
+                    }, 
+                    { 
+                        label: 'Expenses', 
+                        data: expenses, 
+                        backgroundColor: '#e74c3c', 
+                        borderColor: '#c0392b', 
+                        borderWidth: 1 
+                    } 
+                ] 
+            }, 
+            options: { 
+                responsive: true, 
+                maintainAspectRatio: false, 
+                scales: { 
+                    y: { 
+                        beginAtZero: true 
+                    } 
+                } 
+            } 
+        }); 
 
-<script>
-    // Use the context variable passed from the view
-    var budgetData = {{ budget_expense_data|safe }};
+        var ctxPie = document.getElementById('budgetPieChart').getContext('2d'); 
+        var budgetAmount = budgetData[0].budget; 
+        var expensesAmount = budgetData[0].expenses; 
+        var unusedBudget = budgetAmount - expensesAmount; 
+        unusedBudget = unusedBudget < 0 ? 0 : unusedBudget; 
 
-    // Check if data is actually passed
-    console.log(budgetData);  // Log the data to the console for debugging
-
-    if (budgetData.length > 0) {
-        // ----------------- Bar Chart (Budget vs Expenses) -----------------
-        var ctxBar = document.getElementById('budgetChart').getContext('2d');
-        var labels = budgetData.map(data => data.period);
-        var budget = budgetData.map(data => data.budget);
-        var expenses = budgetData.map(data => data.expenses);
-
-        var barChart = new Chart(ctxBar, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [
-                    {
-                        label: 'Budget',
-                        data: budget,
-                        backgroundColor: '#27ae60',  // Green for budget
-                        borderColor: '#2ecc71',
-                        borderWidth: 1
-                    },
-                    {
-                        label: 'Expenses',
-                        data: expenses,
-                        backgroundColor: '#e74c3c',  // Red for expenses
-                        borderColor: '#c0392b',
-                        borderWidth: 1
-                    }
-                ]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
-
-        // ----------------- Pie Chart (Single Budget vs Expenses) -----------------
-        var ctxPie = document.getElementById('budgetPieChart').getContext('2d');
-        
-        // Assuming the first budget period for pie chart representation
-        var budgetAmount = budgetData[0].budget;
-        var expensesAmount = budgetData[0].expenses;
-        var unusedBudget = budgetAmount - expensesAmount;
-
-        // Ensure unusedBudget is not negative
-        unusedBudget = unusedBudget < 0 ? 0 : unusedBudget;
-
-        var pieChart = new Chart(ctxPie, {
-            type: 'pie',  // Set to pie chart
-            data: {
-                labels: ['Unused Budget', 'Expenses'],
-                datasets: [{
-                    data: [unusedBudget, expensesAmount],
-                    backgroundColor: ['#27ae60', '#e74c3c'],  // Green for unused, red for expenses
-                    hoverOffset: 6,  // Creates the 3D-like effect
-                    borderColor: ['#2ecc71', '#c0392b'],
-                    borderWidth: 2
-                }]
-            },
-            options: {
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'bottom'
-                    }
-                },
-                layout: {
-                    padding: 20
-                },
-                animation: {
-                    animateScale: true,  // Animates the chart for a smoother look
-                    animateRotate: true  // Rotates the chart for smoother entry
-                }
-            }
-        });
-
-    } else {
-        document.getElementById('budgetChart').innerHTML = 'No data available for bar chart.';
-        document.getElementById('budgetPieChart').innerHTML = 'No data available for pie chart.';
-    }
-</script>
-
+        var pieChart = new Chart(ctxPie, { 
+            type: 'pie', 
+            data: { 
+                labels: ['Unused Budget', 'Expenses'], 
+                datasets: [{ 
+                    data: [unusedBudget, expensesAmount], 
+                    backgroundColor: ['#27ae60', '#e74c3c'], 
+                    hoverOffset: 6, 
+                    borderColor: ['#2ecc71', '#c0392b'], 
+                    borderWidth: 2 
+                }] 
+            }, 
+            options: { 
+                plugins: { 
+                    legend: { 
+                        display: true, 
+                        position: 'bottom' 
+                    } 
+                }, 
+                layout: { 
+                    padding: 20 
+                }, 
+                animation: { 
+                    animateScale: true, 
+                    animateRotate: true 
+                } 
+            } 
+        }); 
+    } else { 
+        document.getElementById('budgetChart').innerHTML = 'No data available for bar chart.'; 
+        document.getElementById('budgetPieChart').innerHTML = 'No data available for pie chart.'; 
+    } 
+</script> 
 {% endblock %}
