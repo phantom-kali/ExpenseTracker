@@ -1,30 +1,74 @@
-<!-- templates/visuals/expenses_by_category.html -->
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Expenses by Category</h1>
+<h1>Budget vs Expenses (3D Pie Chart)</h1>
 
-<canvas id="categoryChart"></canvas>
+<canvas id="budgetPieChart" style="height: 400px;"></canvas>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    var ctx = document.getElementById('categoryChart').getContext('2d');
-    var categories = {{ categories|safe }};
-    var labels = categories.map(cat => cat.category__name);
-    var data = categories.map(cat => cat.total_amount);
+    // Fetching budget data passed from the Django view
+    var budgetData = {{ budget_expense_data|safe }};
 
-    var chart = new Chart(ctx, {
-        type: 'pie',  // Can be 'bar', 'pie', etc.
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Expenses by Category',
-                data: data,
-                backgroundColor: ['#f39c12', '#2980b9', '#8e44ad', '#27ae60'],
-                borderColor: ['#e67e22', '#3498db', '#9b59b6', '#2ecc71'],
-                borderWidth: 1
-            }]
-        }
-    });
+    console.log(budgetData);  // Log the data to check if it is passed correctly
+
+    if (budgetData.length > 0) {
+        var ctx = document.getElementById('budgetPieChart').getContext('2d');
+        
+        // Use the first budget period for this example
+        var budgetAmount = budgetData[0].budget;
+        var expensesAmount = budgetData[0].expenses;
+        var unusedBudget = budgetAmount - expensesAmount;
+
+        // Generate dynamic colors for the chart
+        var colors = ['#27ae60', '#bdc3c7'];  // Green for unused budget, grey for expenses
+        var borderColors = ['#2ecc71', '#95a5a6'];  // Lighter borders for visual clarity
+
+        var chart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Unused Budget', 'Expenses'],
+                datasets: [{
+                    data: [unusedBudget, expensesAmount],
+                    backgroundColor: colors,  // Colors for chart segments
+                    borderColor: borderColors,  // Borders for a clean look
+                    hoverOffset: 8,  // Increased hover effect for 3D simulation
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom',  // Display the legend below the chart
+                    },
+                    tooltip: {
+                        callbacks: {
+                            // Custom tooltips to show exact amount with currency
+                            label: function(tooltipItem) {
+                                var label = tooltipItem.label || '';
+                                var value = tooltipItem.raw.toLocaleString();  // Format the value with commas
+                                return label + ': $' + value;
+                            }
+                        }
+                    }
+                },
+                layout: {
+                    padding: {
+                        top: 20,  // Padding from top to make the chart more centered
+                        bottom: 20
+                    }
+                },
+                animation: {
+                    animateScale: true,  // Smooth scaling animation
+                    animateRotate: true  // Smooth rotation animation
+                },
+                responsive: true,
+                maintainAspectRatio: false  // Allows the chart to be more flexible in size
+            }
+        });
+    } else {
+        document.getElementById('budgetPieChart').innerHTML = 'No budget data available.';
+    }
 </script>
 {% endblock %}

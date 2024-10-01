@@ -480,3 +480,8 @@ h2 {
     text-align: center; 
     pointer-events: auto; 
 }
+
+.small-pie-chart {
+    height: 400px;
+    width: 400px;
+}

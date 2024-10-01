@@ -17,19 +17,18 @@ def statistics_view(request):
     return render(request, 'visuals/statistics.html', context)
 
 def expenses_by_category_view(request):
-    # Aggregate total expenses by category for the logged-in user
     categories = Category.objects.filter(user=request.user)
     expense_data = (
         Expense.objects.filter(user=request.user)
         .values('category__name')
         .annotate(total_amount=Sum('amount'))
     )
-    
-    # Pass data to the template
+
     context = {
-        'categories': list(expense_data),  # List of category totals
+        'categories': list(expense_data),  # Ensure it's passed as a list of dictionaries
     }
     return render(request, 'visuals/expenses_by_category.html', context)
+
 
 def expenses_over_time_view(request):
     # Get expenses grouped by day
@@ -48,7 +47,6 @@ def expenses_over_time_view(request):
     return render(request, 'visuals/expenses_over_time.html', context)
 
 def budget_vs_expenses_view(request):
-    # Get budgets and their corresponding expenses
     budgets = Budget.objects.filter(user=request.user)
     budget_expense_data = []
 
@@ -58,12 +56,11 @@ def budget_vs_expenses_view(request):
             .aggregate(total_amount=Sum('amount'))['total_amount'] or 0
         )
         budget_expense_data.append({
-            'budget': budget.amount,
-            'expenses': total_expenses,
+            'budget': float(budget.amount),  # Ensure it's a float
+            'expenses': float(total_expenses),  # Ensure it's a float
             'period': f"{budget.start_date} to {budget.end_date}",
         })
-    
-    # Pass data to the template
+
     context = {
         'budget_expense_data': budget_expense_data,
     }
