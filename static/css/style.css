@@ -57,6 +57,7 @@ body {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0 10px;
+    margin-top: 20px; 
 }
 
 .table th,
@@ -82,7 +83,9 @@ body {
 .table tbody tr:hover {
     transform: scale(1.02);
 }
-
+.chart-container {
+    margin-bottom: 40px; 
+}
 .expense-amount {
     font-weight: bold;
     color: var(--danger-color);

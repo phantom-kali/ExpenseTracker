@@ -1,4 +1,3 @@
-<!-- templates/visuals/expenses_over_time.html -->
 {% extends 'base.html' %}
 
 {% block content %}
@@ -11,7 +10,6 @@
     var ctx = document.getElementById('timeChart').getContext('2d');
     var expenses = {{ expenses_by_date|safe }};
     
-    // Format dates nicely using toLocaleDateString() (Assuming day is in 'YYYY-MM-DD' format)
     var labels = expenses.map(exp => new Date(exp.day).toLocaleDateString());
     var data = expenses.map(exp => exp.total_amount);
 
@@ -35,7 +33,7 @@
                 }
             },
             responsive: true,
-            maintainAspectRatio: false  // Ensures proper resizing of the chart
+            maintainAspectRatio: false  
         }
     });
 </script>

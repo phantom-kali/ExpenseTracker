@@ -1,74 +1,143 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Budget vs Expenses (3D Pie Chart)</h1>
+<h1 style="text-align: center; color: green;">Expenses by Category</h1>
 
-<canvas id="budgetPieChart" style="height: 400px;"></canvas>
+<div style="display: flex; justify-content: space-around; margin: 20px 0;">
+    <div style="width: 500px; height: 400px; position: relative;">
+        <h2 style="text-align: center; color: green;">By Amount</h2>
+        <canvas id="expensesPieChartAmount" style="height: 100%; width: 100%;"></canvas>
+    </div>
+
+   
+    <div style="width: 500px; height: 400px; position: relative;">
+        <h2 style="text-align: center; color: green;">By Expense Count</h2>
+        <canvas id="expensesPieChartCount" style="height: 100%; width: 100%;"></canvas>
+    </div>
+</div>
+
+
+<div style="margin: 20px 0; padding: 0 50px;">
+    <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; text-align: center;">
+        <thead style="background-color: #27ae60; color: white;">
+            <tr>
+                <th>Category Name</th>
+                <th>Expense Count</th>
+                <th>User Count</th>
+                <th>Amount ({{ base_currency }})</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for expense in expense_data %}
+            <tr>
+                <td>{{ expense.category__name }}</td>
+                <td>{{ expense.expense_count }}</td>
+                <td>{{ expense.user_count }}</td>
+                <td>{{ expense.total_expenses|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot style="background-color: #f1f1f1;">
+            <tr>
+                <td><strong>Total</strong></td>
+                <td>{{ total_expense_count }}</td>
+                <td>{{ total_user_count }}</td>
+                <td>{{ total_expenses|floatformat:2 }}</td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Fetching budget data passed from the Django view
-    var budgetData = {{ budget_expense_data|safe }};
+    var expenseData = {{ expense_data|safe }};
+    
+    var categories = expenseData.map(data => data.category__name);
+    var totalExpenses = expenseData.map(data => data.total_expenses);
+    var expenseCounts = expenseData.map(data => data.expense_count);
 
-    console.log(budgetData);  // Log the data to check if it is passed correctly
-
-    if (budgetData.length > 0) {
-        var ctx = document.getElementById('budgetPieChart').getContext('2d');
-        
-        // Use the first budget period for this example
-        var budgetAmount = budgetData[0].budget;
-        var expensesAmount = budgetData[0].expenses;
-        var unusedBudget = budgetAmount - expensesAmount;
-
-        // Generate dynamic colors for the chart
-        var colors = ['#27ae60', '#bdc3c7'];  // Green for unused budget, grey for expenses
-        var borderColors = ['#2ecc71', '#95a5a6'];  // Lighter borders for visual clarity
-
-        var chart = new Chart(ctx, {
+   
+    if (categories.length > 1) {
+        var colors = categories.map(() => `hsl(${Math.random() * 360}, 100%, 50%)`);
+        var borderColors = colors.map(color => color.replace('50%', '70%'));  
+        var ctxAmount = document.getElementById('expensesPieChartAmount').getContext('2d');
+        var chartAmount = new Chart(ctxAmount, {
             type: 'pie',
             data: {
-                labels: ['Unused Budget', 'Expenses'],
+                labels: categories,
                 datasets: [{
-                    data: [unusedBudget, expensesAmount],
-                    backgroundColor: colors,  // Colors for chart segments
-                    borderColor: borderColors,  // Borders for a clean look
-                    hoverOffset: 8,  // Increased hover effect for 3D simulation
-                    borderWidth: 2
+                    data: totalExpenses,
+                    backgroundColor: colors,
+                    borderColor: borderColors,
+                    borderWidth: 1
                 }]
             },
             options: {
+                responsive: true,
+                maintainAspectRatio: false,
                 plugins: {
                     legend: {
                         display: true,
-                        position: 'bottom',  // Display the legend below the chart
+                        position: 'bottom',
                     },
                     tooltip: {
                         callbacks: {
-                            // Custom tooltips to show exact amount with currency
                             label: function(tooltipItem) {
                                 var label = tooltipItem.label || '';
-                                var value = tooltipItem.raw.toLocaleString();  // Format the value with commas
+                                var value = tooltipItem.raw.toLocaleString(); 
                                 return label + ': $' + value;
                             }
                         }
                     }
                 },
-                layout: {
-                    padding: {
-                        top: 20,  // Padding from top to make the chart more centered
-                        bottom: 20
+                animation: {
+                    animateScale: true,
+                    animateRotate: true
+                }
+            }
+        });
+
+        
+        var ctxCount = document.getElementById('expensesPieChartCount').getContext('2d');
+        var chartCount = new Chart(ctxCount, {
+            type: 'pie',
+            data: {
+                labels: categories,
+                datasets: [{
+                    data: expenseCounts,
+                    backgroundColor: colors,
+                    borderColor: borderColors,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'bottom',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                var label = tooltipItem.label || '';
+                                var value = tooltipItem.raw.toLocaleString();  
+                                return label + ': ' + value + ' expenses';
+                            }
+                        }
                     }
                 },
                 animation: {
-                    animateScale: true,  // Smooth scaling animation
-                    animateRotate: true  // Smooth rotation animation
-                },
-                responsive: true,
-                maintainAspectRatio: false  // Allows the chart to be more flexible in size
+                    animateScale: true,
+                    animateRotate: true
+                }
             }
         });
     } else {
-        document.getElementById('budgetPieChart').innerHTML = 'No budget data available.';
+        document.getElementById('expensesPieChartAmount').innerHTML = 'Not enough data for chart.';
+        document.getElementById('expensesPieChartCount').innerHTML = 'Not enough data for chart.';
     }
 </script>
 {% endblock %}
