@@ -1,9 +1,11 @@
 from django.shortcuts import render
 from django.db.models import Sum, Count
-from expenses.models import Expense, Category, Budget  
+from expenses.models import Expense, Category, Budget
 from django.utils.timezone import now
 from django.contrib.auth.decorators import login_required
+from django.db.models.functions import TruncDate
 
+@login_required
 def statistics_view(request):
     total_expenses = Expense.objects.filter(user=request.user).aggregate(Sum('amount'))['amount__sum'] or 0
     total_categories = Category.objects.filter(user=request.user).count()
@@ -29,17 +31,17 @@ def expenses_by_category_view(request):
     total_expense_count = sum(item['expense_count'] for item in expense_data)
     total_user_count = sum(item['user_count'] for item in expense_data)
 
-   
     context = {
-        'expense_data': expense_data,
+        'expense_data': list(expense_data),
         'total_expenses': total_expenses,
         'total_expense_count': total_expense_count,
         'total_user_count': total_user_count,
-        'base_currency': 'USD',
+        'base_currency': 'USD'
     }
 
     return render(request, 'visuals/expenses_by_category.html', context)
 
+@login_required
 def expenses_over_time_view(request):
     expenses_by_date = (
         Expense.objects.filter(user=request.user)
@@ -48,12 +50,14 @@ def expenses_over_time_view(request):
         .annotate(total_amount=Sum('amount'))
         .order_by('day')
     )
-    
+
     context = {
         'expenses_by_date': list(expenses_by_date),
     }
     return render(request, 'visuals/expenses_over_time.html', context)
 
+
+@login_required
 def budget_vs_expenses_view(request):
     budgets = Budget.objects.filter(user=request.user)
     budget_expense_data = []
@@ -69,6 +73,7 @@ def budget_vs_expenses_view(request):
             'period': f"{budget.start_date} to {budget.end_date}",
         })
 
+   
     context = {
         'budget_expense_data': budget_expense_data,
     }

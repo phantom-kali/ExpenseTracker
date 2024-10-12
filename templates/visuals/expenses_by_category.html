@@ -1,143 +1,41 @@
 {% extends 'base.html' %}
 
+{% block title %}Expenses by Category{% endblock %}
+
 {% block content %}
-<h1 style="text-align: center; color: green;">Expenses by Category</h1>
+    <div class="container">
+        <h1 class="text-center mb-4">Expenses by Category</h1>
 
-<div style="display: flex; justify-content: space-around; margin: 20px 0;">
-    <div style="width: 500px; height: 400px; position: relative;">
-        <h2 style="text-align: center; color: green;">By Amount</h2>
-        <canvas id="expensesPieChartAmount" style="height: 100%; width: 100%;"></canvas>
+        <table class="table table-striped table-hover mt-4">
+            <thead class="table-success">
+                <tr>
+                    <th>Category Name</th>
+                    <th>Expense Count</th>
+                    <th>User Count</th>
+                    <th>Amount ({{ base_currency }})</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for expense in expense_data %}
+                <tr>
+                    <td>{{ expense.category__name }}</td>
+                    <td>{{ expense.expense_count }}</td>
+                    <td>{{ expense.user_count }}</td>
+                    <td>{{ expense.total_expenses|floatformat:2 }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot class="table-light">
+                <tr>
+                    <td>Total</td>
+                    <td>{{ total_expense_count }}</td>
+                    <td>{{ total_user_count }}</td>
+                    <td>{{ total_expenses|floatformat:2 }}</td>
+                </tr>
+            </tfoot>
+        </table>
     </div>
+{% endblock %}
 
-   
-    <div style="width: 500px; height: 400px; position: relative;">
-        <h2 style="text-align: center; color: green;">By Expense Count</h2>
-        <canvas id="expensesPieChartCount" style="height: 100%; width: 100%;"></canvas>
-    </div>
-</div>
-
-
-<div style="margin: 20px 0; padding: 0 50px;">
-    <table border="1" cellpadding="10" cellspacing="0" style="width: 100%; text-align: center;">
-        <thead style="background-color: #27ae60; color: white;">
-            <tr>
-                <th>Category Name</th>
-                <th>Expense Count</th>
-                <th>User Count</th>
-                <th>Amount ({{ base_currency }})</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for expense in expense_data %}
-            <tr>
-                <td>{{ expense.category__name }}</td>
-                <td>{{ expense.expense_count }}</td>
-                <td>{{ expense.user_count }}</td>
-                <td>{{ expense.total_expenses|floatformat:2 }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-        <tfoot style="background-color: #f1f1f1;">
-            <tr>
-                <td><strong>Total</strong></td>
-                <td>{{ total_expense_count }}</td>
-                <td>{{ total_user_count }}</td>
-                <td>{{ total_expenses|floatformat:2 }}</td>
-            </tr>
-        </tfoot>
-    </table>
-</div>
-
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    var expenseData = {{ expense_data|safe }};
-    
-    var categories = expenseData.map(data => data.category__name);
-    var totalExpenses = expenseData.map(data => data.total_expenses);
-    var expenseCounts = expenseData.map(data => data.expense_count);
-
-   
-    if (categories.length > 1) {
-        var colors = categories.map(() => `hsl(${Math.random() * 360}, 100%, 50%)`);
-        var borderColors = colors.map(color => color.replace('50%', '70%'));  
-        var ctxAmount = document.getElementById('expensesPieChartAmount').getContext('2d');
-        var chartAmount = new Chart(ctxAmount, {
-            type: 'pie',
-            data: {
-                labels: categories,
-                datasets: [{
-                    data: totalExpenses,
-                    backgroundColor: colors,
-                    borderColor: borderColors,
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'bottom',
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(tooltipItem) {
-                                var label = tooltipItem.label || '';
-                                var value = tooltipItem.raw.toLocaleString(); 
-                                return label + ': $' + value;
-                            }
-                        }
-                    }
-                },
-                animation: {
-                    animateScale: true,
-                    animateRotate: true
-                }
-            }
-        });
-
-        
-        var ctxCount = document.getElementById('expensesPieChartCount').getContext('2d');
-        var chartCount = new Chart(ctxCount, {
-            type: 'pie',
-            data: {
-                labels: categories,
-                datasets: [{
-                    data: expenseCounts,
-                    backgroundColor: colors,
-                    borderColor: borderColors,
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'bottom',
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(tooltipItem) {
-                                var label = tooltipItem.label || '';
-                                var value = tooltipItem.raw.toLocaleString();  
-                                return label + ': ' + value + ' expenses';
-                            }
-                        }
-                    }
-                },
-                animation: {
-                    animateScale: true,
-                    animateRotate: true
-                }
-            }
-        });
-    } else {
-        document.getElementById('expensesPieChartAmount').innerHTML = 'Not enough data for chart.';
-        document.getElementById('expensesPieChartCount').innerHTML = 'Not enough data for chart.';
-    }
-</script>
+{% block extra_js %}
 {% endblock %}

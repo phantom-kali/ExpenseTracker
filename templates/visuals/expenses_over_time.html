@@ -1,40 +1,158 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Expenses Over Time</h1>
+<div class="container mt-4">
+    <h1 class="text-center text-success mb-4">Expenses Over Time</h1>
 
-<canvas id="timeChart"></canvas>
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="startDate">Start Date:</label>
+                <input type="date" id="startDate" class="form-control">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="endDate">End Date:</label>
+                <input type="date" id="endDate" class="form-control">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <canvas id="timeChart" style="width: 100%; height: 400px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Expense Summary</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Total Expenses:</strong> <span id="totalExpenses"></span></p>
+                    <p><strong>Average Daily Expense:</strong> <span id="avgDailyExpense"></span></p>
+                    <p><strong>Highest Daily Expense:</strong> <span id="highestDailyExpense"></span></p>
+                    <p><strong>Lowest Daily Expense:</strong> <span id="lowestDailyExpense"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/luxon@2.0.2/build/global/luxon.min.js"></script>
 <script>
-    var ctx = document.getElementById('timeChart').getContext('2d');
     var expenses = {{ expenses_by_date|safe }};
-    
-    var labels = expenses.map(exp => new Date(exp.day).toLocaleDateString());
-    var data = expenses.map(exp => exp.total_amount);
 
-    var chart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Expenses Over Time',
-                data: data,
-                borderColor: '#2980b9',
-                backgroundColor: 'rgba(52, 152, 219, 0.5)',
-                borderWidth: 1,
-                fill: true
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            },
-            responsive: true,
-            maintainAspectRatio: false  
+    expenses = expenses.map(exp => ({
+        day: luxon.DateTime.fromISO(exp.day),
+        total_amount: exp.total_amount
+    })).sort((a, b) => a.day - b.day);
+
+    var ctx = document.getElementById('timeChart').getContext('2d');
+    var chart;
+
+    function updateChart(startDate, endDate) {
+        var filteredExpenses = expenses.filter(exp => 
+            exp.day >= startDate && exp.day <= endDate
+        );
+
+        var labels = filteredExpenses.map(exp => exp.day.toLocaleString());
+        var data = filteredExpenses.map(exp => exp.total_amount);
+
+        if (chart) {
+            chart.destroy();
         }
-    });
+
+        chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Daily Expenses',
+                    data: data,
+                    borderColor: '#2ecc71',
+                    backgroundColor: 'rgba(46, 204, 113, 0.2)',
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'day',
+                            displayFormats: {
+                                day: 'MMM d'
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'Date'
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Expense Amount'
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `Expense: $${context.parsed.y.toFixed(2)}`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        updateSummary(filteredExpenses);
+    }
+
+    function updateSummary(filteredExpenses) {
+        var totalExpenses = filteredExpenses.reduce((sum, exp) => sum + exp.total_amount, 0);
+        var avgDailyExpense = totalExpenses / filteredExpenses.length;
+        var highestDailyExpense = Math.max(...filteredExpenses.map(exp => exp.total_amount));
+        var lowestDailyExpense = Math.min(...filteredExpenses.map(exp => exp.total_amount));
+
+        document.getElementById('totalExpenses').textContent = `$${totalExpenses.toFixed(2)}`;
+        document.getElementById('avgDailyExpense').textContent = `$${avgDailyExpense.toFixed(2)}`;
+        document.getElementById('highestDailyExpense').textContent = `$${highestDailyExpense.toFixed(2)}`;
+        document.getElementById('lowestDailyExpense').textContent = `$${lowestDailyExpense.toFixed(2)}`;
+    }
+
+    document.getElementById('startDate').addEventListener('change', updateDateRange);
+    document.getElementById('endDate').addEventListener('change', updateDateRange);
+
+    function updateDateRange() {
+        var startDate = luxon.DateTime.fromISO(document.getElementById('startDate').value);
+        var endDate = luxon.DateTime.fromISO(document.getElementById('endDate').value);
+
+        if (startDate && endDate && startDate <= endDate) {
+            updateChart(startDate, endDate);
+        }
+    }
+
+    var initialStartDate = expenses[0].day;
+    var initialEndDate = expenses[expenses.length - 1].day;
+    document.getElementById('startDate').value = initialStartDate.toISODate();
+    document.getElementById('endDate').value = initialEndDate.toISODate();
+    updateChart(initialStartDate, initialEndDate);
 </script>
 {% endblock %}
