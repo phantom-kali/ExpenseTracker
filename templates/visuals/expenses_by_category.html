@@ -11,7 +11,6 @@
                 <tr>
                     <th>Category Name</th>
                     <th>Expense Count</th>
-                    <th>User Count</th>
                     <th>Amount ({{ base_currency }})</th>
                 </tr>
             </thead>
@@ -20,7 +19,6 @@
                 <tr>
                     <td>{{ expense.category__name }}</td>
                     <td>{{ expense.expense_count }}</td>
-                    <td>{{ expense.user_count }}</td>
                     <td>{{ expense.total_expenses|floatformat:2 }}</td>
                 </tr>
                 {% endfor %}
@@ -29,7 +27,6 @@
                 <tr>
                     <td>Total</td>
                     <td>{{ total_expense_count }}</td>
-                    <td>{{ total_user_count }}</td>
                     <td>{{ total_expenses|floatformat:2 }}</td>
                 </tr>
             </tfoot>
