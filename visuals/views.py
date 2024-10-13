@@ -4,6 +4,8 @@ from expenses.models import Expense, Category, Budget
 from django.utils.timezone import now
 from django.contrib.auth.decorators import login_required
 from django.db.models.functions import TruncDate
+from datetime import datetime
+from django.http import JsonResponse
 
 @login_required
 def statistics_view(request):
@@ -40,23 +42,6 @@ def expenses_by_category_view(request):
     }
 
     return render(request, 'visuals/expenses_by_category.html', context)
-
-@login_required
-def expenses_over_time_view(request):
-    expenses_by_date = (
-        Expense.objects.filter(user=request.user)
-        .extra(select={'day': "date(date)"})  
-        .values('day')
-        .annotate(total_amount=Sum('amount'))
-        .order_by('day')
-    )
-
-    context = {
-        'expenses_by_date': list(expenses_by_date),
-    }
-    return render(request, 'visuals/expenses_over_time.html', context)
-
-
 @login_required
 def budget_vs_expenses_view(request):
     budgets = Budget.objects.filter(user=request.user)
@@ -78,3 +63,42 @@ def budget_vs_expenses_view(request):
         'budget_expense_data': budget_expense_data,
     }
     return render(request, 'visuals/budget_vs_expenses.html', context)
+
+
+@login_required
+def expenses_over_time_view(request):
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+
+    expenses = Expense.objects.filter(user=request.user)
+
+    if start_date and end_date:
+        start_date = datetime.strptime(start_date, '%Y-%m-%d')
+        end_date = datetime.strptime(end_date, '%Y-%m-%d')
+        expenses = expenses.filter(date__range=[start_date, end_date])
+
+    expenses_by_date = (
+        expenses
+        .extra(select={'day': "date(date)"})
+        .values('day')
+        .annotate(total_amount=Sum('amount'))
+        .order_by('day')
+    )
+
+    total_expenses = sum(exp['total_amount'] for exp in expenses_by_date)
+    highest_expense = max((exp['total_amount'] for exp in expenses_by_date), default=0)
+    lowest_expense = min((exp['total_amount'] for exp in expenses_by_date), default=0)
+    avg_expense = total_expenses / len(expenses_by_date) if expenses_by_date else 0
+
+    context = {
+        'expenses_by_date': list(expenses_by_date),
+        'total_expenses': total_expenses,
+        'highest_expense': highest_expense,
+        'lowest_expense': lowest_expense,
+        'avg_expense': avg_expense,
+    }
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse(context)
+    
+    return render(request, 'visuals/expenses_over_time.html', context)
