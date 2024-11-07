@@ -7,26 +7,26 @@
 
 <div class="row">
     <div class="col-md-4 mb-4">
-        <div class=" card">
-            <div class="card-body">
-                <h5 class="card-title">Total Expenses</h5>
-                <h2 class="card-text">${{ total_expenses }}</h2>
+        <div class="card card-shadow">
+            <div class="card-body text-center">
+                <h5 class="card-title"><i class="fas fa-wallet me-2"></i>Total Expenses</h5>
+                <h2 class="card-text text-primary">${{ total_expenses }}</h2>
             </div>
         </div>
     </div>
     <div class="col-md-4 mb-4">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">This Month</h5>
-                <h2 class="card-text">${{ monthly_expenses }}</h2>
+        <div class="card card-shadow">
+            <div class="card-body text-center">
+                <h5 class="card-title"><i class="fas fa-calendar-alt me-2"></i>This Month</h5>
+                <h2 class="card-text text-success">${{ monthly_expenses }}</h2>
             </div>
         </div>
     </div>
     <div class="col-md-4 mb-4">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Budget Remaining</h5>
-                <h2 class="card-text">${{ budget_remaining }}</h2>
+        <div class="card card-shadow">
+            <div class="card-body text-center">
+                <h5 class="card-title"><i class="fas fa-piggy-bank me-2"></i>Budget Remaining</h5>
+                <h2 class="card-text text-danger">${{ budget_remaining }}</h2>
             </div>
         </div>
     </div>
@@ -34,11 +34,11 @@
 
 <div class="row">
     <div class="col-md-8 mb-4">
-        <div class="card">
+        <div class="card card-shadow">
             <div class="card-body">
-                <h5 class="card-title">Recent Expenses</h5>
-                <table class="table">
-                    <thead>
+                <h5 class="card-title"><i class="fas fa-history me-2"></i>Recent Expenses</h5>
+                <table class="table table-hover mt-3">
+                    <thead class="table-light">
                         <tr>
                             <th>Date</th>
                             <th>Category</th>
@@ -52,7 +52,7 @@
                             <td>{{ expense.date }}</td>
                             <td>{{ expense.category.name }}</td>
                             <td>{{ expense.description }}</td>
-                            <td>${{ expense.amount }}</td>
+                            <td class="text-end text-muted">${{ expense.amount }}</td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -61,12 +61,12 @@
         </div>
     </div>
     <div class="col-md-4 mb-4">
-        <div class="card">
+        <div class="card card-shadow">
             <div class="card-body">
-                <h5 class="card-title">Categories</h5>
-                <ul class="list-group list-group-flush">
+                <h5 class="card-title"><i class="fas fa-tags me-2"></i>Categories</h5>
+                <ul class="list-group list-group-flush mt-3">
                     {% for category in categories %}
-                    <li class="list-group-item">{{ category.name }}</li>
+                    <li class="list-group-item text-muted">{{ category.name }}</li>
                     {% endfor %}
                 </ul>
             </div>
