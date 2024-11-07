@@ -3,36 +3,80 @@
 {% block title %}Expenses by Category{% endblock %}
 
 {% block content %}
-    <div class="container">
-        <h1 class="text-center mb-4">Expenses by Category</h1>
+<div class="container">
+    <h1 class="text-center mb-4">Expenses by Category</h1>
 
-        <table class="table table-striped table-hover mt-4">
-            <thead class="table-success">
-                <tr>
-                    <th>Category Name</th>
-                    <th>Expense Count</th>
-                    <th>Amount ({{ base_currency }})</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for expense in expense_data %}
-                <tr>
-                    <td>{{ expense.category__name }}</td>
-                    <td>{{ expense.expense_count }}</td>
-                    <td>{{ expense.total_expenses|floatformat:2 }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-            <tfoot class="table-light">
-                <tr>
-                    <td>Total</td>
-                    <td>{{ total_expense_count }}</td>
-                    <td>{{ total_expenses|floatformat:2 }}</td>
-                </tr>
-            </tfoot>
-        </table>
+    <table class="table table-striped table-hover mt-4">
+        <thead class="table-success">
+            <tr>
+                <th>Category Name</th>
+                <th>Expense Count</th>
+                <th>Amount ({{ base_currency }})</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for expense in expense_data %}
+            <tr>
+                <td>{{ expense.category }}</td>  <!-- Access category directly -->
+                <td>{{ expense.expense_count }}</td>
+                <td>{{ expense.total_expenses|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot class="table-light">
+            <tr>
+                <td>Total</td>
+                <td>{{ total_expense_count }}</td>
+                <td>{{ total_expenses|floatformat:2 }}</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <!-- Chart for Expenses by Category -->
+    <div class="my-5">
+        <canvas id="expensesByCategoryChart" width="400" height="400"></canvas>
     </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Data for Chart.js
+    const expenseData = {{ expense_data|safe }};  // Directly use the expense_data
+
+    // Extract category names and total expenses for the chart
+    const categories = expenseData.map(item => item.category);
+    const expenses = expenseData.map(item => item.total_expenses);
+
+    // Create Chart
+    const ctx = document.getElementById('expensesByCategoryChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'pie',  // Change to 'bar', 'doughnut', or other types as desired
+        data: {
+            labels: categories,
+            datasets: [{
+                label: 'Expenses by Category',
+                data: expenses,
+                backgroundColor: [
+                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
+                ],
+                borderColor: '#FFFFFF',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                title: {
+                    display: true,
+                    text: 'Expenses by Category'
+                }
+            }
+        }
+    });
+</script>
 {% endblock %}
