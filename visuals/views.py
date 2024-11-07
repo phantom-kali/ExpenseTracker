@@ -23,25 +23,39 @@ def statistics_view(request):
 
 @login_required
 def expenses_by_category_view(request):
-    expense_data = Expense.objects.filter(user=request.user).values('category__name').annotate(
-        total_expenses=Sum('amount'),
-        expense_count=Count('id'),
-        user_count=Count('user', distinct=True)
-    )
+    # Get all categories for the logged-in user
+    categories = Category.objects.filter(user=request.user)
+    expense_data = []
 
-    total_expenses = sum(item['total_expenses'] for item in expense_data)
+    # Loop through each category and calculate total expenses and expense count
+    for category in categories:
+        total_expenses = (
+            Expense.objects.filter(user=request.user, category=category)
+            .aggregate(total_amount=Sum('amount'))['total_amount'] or 0
+        )
+        expense_count = (
+            Expense.objects.filter(user=request.user, category=category)
+            .count()
+        )
+        expense_data.append({
+            'category': category.name,  # Category name
+            'total_expenses': float(total_expenses),  # Ensure it's a float for JSON compatibility
+            'expense_count': expense_count,
+        })
+
+    # Calculate totals
+    total_expenses_sum = sum(item['total_expenses'] for item in expense_data)
     total_expense_count = sum(item['expense_count'] for item in expense_data)
-    total_user_count = sum(item['user_count'] for item in expense_data)
 
+    # Pass data to template
     context = {
-        'expense_data': list(expense_data),
-        'total_expenses': total_expenses,
+        'expense_data': expense_data,  # Pass the list of dictionaries
+        'total_expenses': total_expenses_sum,
         'total_expense_count': total_expense_count,
-        'total_user_count': total_user_count,
-        'base_currency': 'USD'
+        'base_currency': 'USD',  # Define as appropriate
     }
-
     return render(request, 'visuals/expenses_by_category.html', context)
+
 @login_required
 def budget_vs_expenses_view(request):
     budgets = Budget.objects.filter(user=request.user)
