@@ -1,102 +1,193 @@
-{% extends 'base.html' %} 
-{% block content %} 
-<h1 style="text-align: center; color:green;">Budget vs Expenses & Budget Overview</h1> 
+{% extends 'base.html' %}
+{% block content %}
+<h1 style="text-align: center; color:green;">Budget vs Expenses & Budget Overview</h1>
 
 <div class="container">
     <div class="row">
-        <div class="col-md-6 mb-4">
-            <div style="width: 100%; height: 400px; overflow: hidden; position: relative; margin: 0 auto;">
-                <canvas id="budgetChart" style="height: 100%; width: 100%;"></canvas> 
+        <div class="col-md-12 mb-4">
+            <div class="d-flex justify-content-end">
+                <label for="chartType" class="me-2">Chart Type:</label>
+                <select id="chartType" class="form-select" style="max-width: 200px;">
+                    <option value="bar">Bar Chart</option>
+                    <option value="stackedBar">Stacked Bar Chart</option>
+                    <option value="line">Line Chart</option>
+                    <option value="area">Area Chart</option>
+                    <option value="pie">Pie Chart</option>
+                    <option value="gauge">Gauge Chart</option>
+                    <!-- Approximations for unsupported chart types -->
+                    <option value="waterfall">Waterfall Chart (Approx)</option>
+                    <option value="bullet">Bullet Chart (Approx)</option>
+                </select>
             </div>
         </div>
-        
-        <div class="col-md-6 mb-4">
-            <div style="width: 100%; height: 400px; overflow: hidden; position: relative; margin: 0 auto;">
-                <canvas id="budgetPieChart" style="height: 100%; width: 100%;"></canvas> 
+    </div>
+    <div class="row">
+        <div class="col-md-12 mb-4">
+            <div style="width: 100%; height: 400px;">
+                <canvas id="budgetChart"></canvas>
             </div>
         </div>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
-<script> 
-    var budgetData = {{ budget_expense_data|safe }}; 
-    console.log(budgetData); 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const budgetData = {{ budget_expense_data|safe }};
+    if (budgetData.length > 0) {
+        const ctx = document.getElementById('budgetChart').getContext('2d');
+        const labels = budgetData.map(data => data.period);
+        const budget = budgetData.map(data => data.budget);
+        const expenses = budgetData.map(data => data.expenses);
 
-    if (budgetData.length > 0) { 
-        var ctxBar = document.getElementById('budgetChart').getContext('2d'); 
-        var labels = budgetData.map(data => data.period); 
-        var budget = budgetData.map(data => data.budget); 
-        var expenses = budgetData.map(data => data.expenses); 
-        var barChart = new Chart(ctxBar, { 
-            type: 'bar', 
-            data: { 
-                labels: labels, 
-                datasets: [ 
-                    { 
-                        label: 'Budget', 
-                        data: budget, 
-                        backgroundColor: '#27ae60', 
-                        borderColor: '#2ecc71', 
-                        borderWidth: 1 
-                    }, 
-                    { 
-                        label: 'Expenses', 
-                        data: expenses, 
-                        backgroundColor: '#e74c3c', 
-                        borderColor: '#c0392b', 
-                        borderWidth: 1 
-                    } 
-                ] 
-            }, 
-            options: { 
-                responsive: true, 
-                maintainAspectRatio: false, 
-                scales: { 
-                    y: { 
-                        beginAtZero: true 
-                    } 
-                } 
-            } 
-        }); 
+        let chartInstance;
 
-        var ctxPie = document.getElementById('budgetPieChart').getContext('2d'); 
-        var budgetAmount = budgetData[0].budget; 
-        var expensesAmount = budgetData[0].expenses; 
-        var unusedBudget = budgetAmount - expensesAmount; 
-        unusedBudget = unusedBudget < 0 ? 0 : unusedBudget; 
+        // Function to create chart based on selected type
+        function createChart(type) {
+            if (chartInstance) chartInstance.destroy();
 
-        var pieChart = new Chart(ctxPie, { 
-            type: 'pie', 
-            data: { 
-                labels: ['Budget', 'Expenses'], 
-                datasets: [{ 
-                    data: [unusedBudget, expensesAmount], 
-                    backgroundColor: ['#27ae60', '#e74c3c'], 
-                    hoverOffset: 6, 
-                    borderColor: ['#2ecc71', '#c0392b'], 
-                    borderWidth: 2 
-                }] 
-            }, 
-            options: { 
-                plugins: { 
-                    legend: { 
-                        display: true, 
-                        position: 'bottom' 
-                    } 
-                }, 
-                layout: { 
-                    padding: 20 
-                }, 
-                animation: { 
-                    animateScale: true, 
-                    animateRotate: true 
-                } 
-            } 
-        }); 
-    } else { 
-        document.getElementById('budgetChart').innerHTML = 'No data available for bar chart.'; 
-        document.getElementById('budgetPieChart').innerHTML = 'No data available for pie chart.'; 
-    } 
-</script> 
+            const dataConfig = {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Budget',
+                        data: budget,
+                        backgroundColor: '#27ae60',
+                        borderColor: '#2ecc71',
+                        borderWidth: 1,
+                        fill: type === 'area'
+                    },
+                    {
+                        label: 'Expenses',
+                        data: expenses,
+                        backgroundColor: '#e74c3c',
+                        borderColor: '#c0392b',
+                        borderWidth: 1,
+                        fill: type === 'area'
+                    }
+                ]
+            };
+
+            let chartConfig;
+
+            switch (type) {
+                case 'bar':
+                    chartConfig = { type: 'bar', data: dataConfig, options: { ...defaultOptions } };
+                    break;
+
+                case 'stackedBar':
+                    chartConfig = {
+                        type: 'bar',
+                        data: dataConfig,
+                        options: {
+                            ...defaultOptions,
+                            scales: { x: { stacked: true }, y: { stacked: true } }
+                        }
+                    };
+                    break;
+
+                case 'line':
+                    chartConfig = { type: 'line', data: dataConfig, options: { ...defaultOptions } };
+                    break;
+
+                case 'area':
+                    chartConfig = {
+                        type: 'line',
+                        data: dataConfig,
+                        options: { ...defaultOptions, elements: { line: { fill: true } } }
+                    };
+                    break;
+
+                case 'pie':
+                    chartConfig = {
+                        type: 'pie',
+                        data: {
+                            labels: ['Budget', 'Expenses'],
+                            datasets: [{
+                                data: [budget.reduce((a, b) => a + b, 0), expenses.reduce((a, b) => a + b, 0)],
+                                backgroundColor: ['#27ae60', '#e74c3c']
+                            }]
+                        },
+                        options: { plugins: { legend: { position: 'bottom' } } }
+                    };
+                    break;
+
+                case 'gauge':
+                    // Gauge chart approximated with a polar area chart
+                    chartConfig = {
+                        type: 'polarArea',
+                        data: {
+                            labels: ['Used Budget', 'Remaining Budget'],
+                            datasets: [{
+                                data: [expenses.reduce((a, b) => a + b, 0), budget.reduce((a, b) => a + b, 0) - expenses.reduce((a, b) => a + b, 0)],
+                                backgroundColor: ['#e74c3c', '#27ae60']
+                            }]
+                        },
+                        options: { plugins: { legend: { position: 'bottom' } } }
+                    };
+                    break;
+
+                case 'waterfall':
+                    // Waterfall approximation using bar chart with positive and negative values
+                    chartConfig = {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: 'Cumulative Expense',
+                                    data: expenses.map((expense, i) => expense - budget[i]),
+                                    backgroundColor: expenses.map((expense, i) => expense > budget[i] ? '#e74c3c' : '#27ae60'),
+                                    borderColor: expenses.map((expense, i) => expense > budget[i] ? '#c0392b' : '#2ecc71')
+                                }
+                            ]
+                        },
+                        options: { ...defaultOptions }
+                    };
+                    break;
+
+                case 'bullet':
+                    // Bullet chart approximation using horizontal bar
+                    chartConfig = {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Actual Expense vs. Budget',
+                                data: expenses,
+                                backgroundColor: '#e74c3c',
+                                borderColor: '#c0392b'
+                            }]
+                        },
+                        options: {
+                            ...defaultOptions,
+                            indexAxis: 'y'
+                        }
+                    };
+                    break;
+
+                default:
+                    chartConfig = { type: 'bar', data: dataConfig, options: { ...defaultOptions } };
+            }
+
+            chartInstance = new Chart(ctx, chartConfig);
+        }
+
+        const defaultOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: { y: { beginAtZero: true } },
+            plugins: { title: { display: true, text: 'Budget vs Expenses' } }
+        };
+
+        // Initial chart setup as bar chart
+        createChart('bar');
+
+        // Event listener for chart type selection
+        document.getElementById('chartType').addEventListener('change', function () {
+            createChart(this.value);
+        });
+    } else {
+        document.getElementById('budgetChart').textContent = 'No data available for chart.';
+    }
+</script>
 {% endblock %}
