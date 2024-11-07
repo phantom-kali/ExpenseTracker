@@ -1,29 +1,39 @@
 {% extends 'base.html' %}
 {% block content %}
-<h1 style="text-align: center; color:#28a745;">Budget vs Expenses & Budget Overview</h1>
+<h1 class="text-center" style="color:#28a745; font-size: 1.8rem; margin-top: 1rem;">Budget vs Expenses & Budget Overview</h1>
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-12 mb-4">
-            <div class="d-flex justify-content-end">
-                <label for="chartType" class="me-2">Chart Type:</label>
-                <select id="chartType" class="form-select" style="max-width: 200px;">
-                    <option value="bar">Bar Chart</option>
-                    <option value="stackedBar">Stacked Bar Chart</option>
-                    <option value="line">Line Chart</option>
-                    <option value="area">Area Chart</option>
-                    <option value="pie">Pie Chart</option>
-                    <option value="gauge">Gauge Chart</option>
-                    <!-- Approximations for unsupported chart types -->
-                    <option value="waterfall">Waterfall Chart (Approx)</option>
-                    <option value="bullet">Bullet Chart (Approx)</option>
-                </select>
-            </div>
+<div class="container mt-3">
+    <!-- Summary Section -->
+    <div class="row mb-4">
+        <div class="col-md-6 text-center">
+            <h5>Total Budget: <span style="color: #27ae60;">{{ budget_total }}</span></h5>
+        </div>
+        <div class="col-md-6 text-center">
+            <h5>Total Expenses: <span style="color: #e74c3c;">{{ expenses_total }}</span></h5>
         </div>
     </div>
+
+    <!-- Chart Type Selection and Chart -->
     <div class="row">
-        <div class="col-md-12 mb-4">
-            <div style="width: 100%; height: 400px;">
+        <div class="col-md-12 d-flex justify-content-end mb-3">
+            <label for="chartType" class="me-2">Chart Type:</label>
+            <select id="chartType" class="form-select" style="max-width: 200px;">
+                <option value="bar">Bar Chart</option>
+                <option value="stackedBar">Stacked Bar Chart</option>
+                <option value="line">Line Chart</option>
+                <option value="area">Area Chart</option>
+                <option value="pie">Pie Chart</option>
+                <option value="gauge">Gauge Chart</option>
+                <option value="waterfall">Waterfall Chart (Approx)</option>
+                <option value="bullet">Bullet Chart (Approx)</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Chart Container -->
+    <div class="row justify-content-center">
+        <div class="col-md-10" style="position: relative;">
+            <div style="width: 100%; height: 500px;">
                 <canvas id="budgetChart"></canvas>
             </div>
         </div>
@@ -41,7 +51,6 @@
 
         let chartInstance;
 
-        // Function to create chart based on selected type
         function createChart(type) {
             if (chartInstance) chartInstance.destroy();
 
@@ -54,7 +63,8 @@
                         backgroundColor: '#27ae60',
                         borderColor: '#2ecc71',
                         borderWidth: 1,
-                        fill: type === 'area'
+                        fill: type === 'area',
+                        barPercentage: 0.5, // adjust bar width
                     },
                     {
                         label: 'Expenses',
@@ -62,18 +72,17 @@
                         backgroundColor: '#e74c3c',
                         borderColor: '#c0392b',
                         borderWidth: 1,
-                        fill: type === 'area'
+                        fill: type === 'area',
+                        barPercentage: 0.5,
                     }
                 ]
             };
 
             let chartConfig;
-
             switch (type) {
                 case 'bar':
                     chartConfig = { type: 'bar', data: dataConfig, options: { ...defaultOptions } };
                     break;
-
                 case 'stackedBar':
                     chartConfig = {
                         type: 'bar',
@@ -84,11 +93,9 @@
                         }
                     };
                     break;
-
                 case 'line':
                     chartConfig = { type: 'line', data: dataConfig, options: { ...defaultOptions } };
                     break;
-
                 case 'area':
                     chartConfig = {
                         type: 'line',
@@ -96,7 +103,6 @@
                         options: { ...defaultOptions, elements: { line: { fill: true } } }
                     };
                     break;
-
                 case 'pie':
                     chartConfig = {
                         type: 'pie',
@@ -110,9 +116,7 @@
                         options: { plugins: { legend: { position: 'bottom' } } }
                     };
                     break;
-
                 case 'gauge':
-                    // Gauge chart approximated with a polar area chart
                     chartConfig = {
                         type: 'polarArea',
                         data: {
@@ -125,9 +129,7 @@
                         options: { plugins: { legend: { position: 'bottom' } } }
                     };
                     break;
-
                 case 'waterfall':
-                    // Waterfall approximation using bar chart with positive and negative values
                     chartConfig = {
                         type: 'bar',
                         data: {
@@ -144,9 +146,7 @@
                         options: { ...defaultOptions }
                     };
                     break;
-
                 case 'bullet':
-                    // Bullet chart approximation using horizontal bar
                     chartConfig = {
                         type: 'bar',
                         data: {
@@ -164,7 +164,6 @@
                         }
                     };
                     break;
-
                 default:
                     chartConfig = { type: 'bar', data: dataConfig, options: { ...defaultOptions } };
             }
@@ -179,10 +178,8 @@
             plugins: { title: { display: true, text: 'Budget vs Expenses' } }
         };
 
-        // Initial chart setup as bar chart
         createChart('bar');
 
-        // Event listener for chart type selection
         document.getElementById('chartType').addEventListener('change', function () {
             createChart(this.value);
         });
