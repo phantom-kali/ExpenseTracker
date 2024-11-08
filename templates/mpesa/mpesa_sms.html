@@ -1,16 +1,70 @@
 {% extends "base.html" %}
 
+{% block extra_css %}
+<style>
+    .container {
+        padding-top: 50px;
+        max-width: 600px;
+    }
+
+    .card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-control:focus {
+        border-color: #28a745;
+        box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border: none;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        padding: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+
+    .input-group-text {
+        border-right: 0;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #495057;
+    }
+
+</style>
+{% endblock %}
+
 {% block content %}
-  <div class="container">
-    <h2>Submit M-Pesa SMS</h2>
-    <form method="POST" action="{% url 'submit_mpesa_sms' %}">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="sms_text">M-Pesa SMS:</label>
-            <textarea name="sms_text" id="sms_text" class="form-control" rows="5" placeholder="Paste the M-Pesa SMS here..." required></textarea>
+<div class="container">
+    <div class="card mx-auto">
+        <div class="card-body p-4">
+            <h2 class="text-center text-success mb-4" style="font-weight: 600;">Submit M-Pesa SMS</h2>
+            <form method="POST" action="{% url 'submit_mpesa_sms' %}">
+                {% csrf_token %}
+                <div class="form-group mb-4">
+                    <label for="sms_text" class="form-label">M-Pesa SMS:</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light">
+                            <i class="fas fa-sms text-muted"></i>
+                        </span>
+                        <textarea name="sms_text" id="sms_text" class="form-control" rows="5" placeholder="Paste the M-Pesa SMS here..." required></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success w-100 mt-3 shadow">
+                    <i class="fas fa-paper-plane me-2"></i>Submit
+                </button>
+            </form>
         </div>
-        <button type="submit" class="btn btn-primary mt-2">Submit</button>
-    </form>
-    
-  </div>
+    </div>
+</div>
 {% endblock %}
